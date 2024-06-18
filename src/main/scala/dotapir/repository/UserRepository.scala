@@ -16,6 +16,9 @@ trait UserRepository {
   def delete(id: Long): Task[User]
 }
 
+/** ici les overrides ne servent à rien d'autre que pour ne pas avoir de
+  * surprise si on change les méthodes d'UserRepository
+  */
 class UserRepositoryLive private (quill: Quill.Postgres[SnakeCase])
     extends UserRepository {
 

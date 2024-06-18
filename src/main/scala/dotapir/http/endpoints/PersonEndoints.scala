@@ -24,7 +24,8 @@ object PersonEndpoints extends BaseEndpoint:
       .out(jsonBody[User])
       .description("Create person")
 
-  // explain what is -R
+  /** J'ai pas compris pourquoi -R est contravariant ici.
+    */
   val listEndpoint: Endpoint[Unit, Unit, Throwable, List[User], Any] =
     baseEndpoint
       .tag("list-person")
