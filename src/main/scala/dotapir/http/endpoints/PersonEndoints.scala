@@ -10,10 +10,13 @@ import dotapir.model.*
 
 object PersonEndpoints extends BaseEndpoint:
 
+  /**
+   * Endpoint de création d'une {@link Person}
+   */
   val createEndpoint: Endpoint[Unit, Person, Throwable, User, Any] =
     baseEndpoint
       .tag("person")
-      .name("person")
+      .name("person_create")
       .post
       .in("person")
       .in(
@@ -23,3 +26,15 @@ object PersonEndpoints extends BaseEndpoint:
       )
       .out(jsonBody[User])
       .description("Create person")
+
+  /**
+   * Endpoint de listing de toutes les {@link Person} en base
+   */
+  val listEndpoint: Endpoint[Unit, Unit, Throwable, List[User], Any] =
+    baseEndpoint
+      .tag("person")
+      .name("person_list")
+      .get
+      .in("person")
+      .out(jsonBody[List[User]])
+      .description("List persons")
