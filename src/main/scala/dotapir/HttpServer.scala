@@ -17,11 +17,7 @@ import dotapir.repository.Repository
 
 object HttpServer extends ZIOAppDefault {
 
-  private val webJarRoutes = staticResourcesGetServerEndpoint[Task]("public")(
-    this.getClass.getClassLoader,
-    "public"
-  )
-
+  // Adds a CORS middleware, because everybody loves CORS
   val serverOptions: ZioHttpServerOptions[Any] =
     ZioHttpServerOptions.customiseInterceptors
       .appendInterceptor(
@@ -29,6 +25,7 @@ object HttpServer extends ZIOAppDefault {
       )
       .options
 
+  // Run the migrations at mose 2 times
   private val runMigrations = for {
     flyway <- ZIO.service[FlywayService]
     _ <- flyway
@@ -39,7 +36,8 @@ object HttpServer extends ZIOAppDefault {
       }
   } yield ()
 
-  private val serrverProgram =
+  // Gather endspoints and serve them
+  private val serverProgram =
     for {
       _ <- ZIO.succeed(println("Hello world"))
       endpoints <- HttpApi.endpointsZIO
@@ -47,14 +45,14 @@ object HttpServer extends ZIOAppDefault {
         .fromServerEndpoints(endpoints, "zio-laminar-demo", "1.0.0")
       _ <- Server.serve(
         ZioHttpInterpreter(serverOptions)
-          .toHttp(webJarRoutes :: endpoints ::: docEndpoints)
+          .toHttp(endpoints ::: docEndpoints)
       )
     } yield ()
 
   private val program =
     for {
       _ <- runMigrations
-      _ <- serrverProgram
+      _ <- serverProgram
     } yield ()
 
   override def run =

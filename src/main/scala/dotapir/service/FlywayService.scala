@@ -13,6 +13,7 @@ trait FlywayService {
   def runRepair(): Task[Unit]
 }
 
+
 class FlywayServiceLive private (flyway: Flyway) extends FlywayService {
   override def runClean(): Task[Unit] = ZIO.attemptBlocking(flyway.clean())
   override def runBaseline(): Task[Unit] =
@@ -21,6 +22,7 @@ class FlywayServiceLive private (flyway: Flyway) extends FlywayService {
     ZIO.attemptBlocking(flyway.migrate())
   override def runRepair(): Task[Unit] = ZIO.attemptBlocking(flyway.repair())
 }
+
 
 object FlywayServiceLive {
   def live: ZLayer[FlywayConfig, Throwable, FlywayService] = ZLayer(
@@ -35,6 +37,8 @@ object FlywayServiceLive {
     } yield new FlywayServiceLive(flyway)
   )
 
+  // Wtf is this 
+  // I think it may to map the configuration file to a layer
   val configuredLayer =
     Configs.makeConfigLayer[FlywayConfig]("db.dataSource") >>> live
 }

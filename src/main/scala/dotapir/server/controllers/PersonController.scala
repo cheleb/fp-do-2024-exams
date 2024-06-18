@@ -12,6 +12,7 @@ import dotapir.repository.UserRepository
 
 class PersonController(userRepository: UserRepository) extends BaseController {
 
+  // Take a tapir endpoint and convert it into a zio endpoint, additionally adds business logic
   val create: ServerEndpoint[Any, Task] = PersonEndpoints.createEndpoint
     .zServerLogic { case (person) =>
       userRepository.create(
@@ -19,8 +20,13 @@ class PersonController(userRepository: UserRepository) extends BaseController {
       )
     }
 
+  val list: ServerEndpoint[Any, Task] = PersonEndpoints.listEndpoint
+    .zServerLogic { case () =>
+      userRepository.list
+    }
+
   val routes: List[ServerEndpoint[Any, Task]] =
-    List(create)
+    List(create, list)
 }
 
 object PersonController {

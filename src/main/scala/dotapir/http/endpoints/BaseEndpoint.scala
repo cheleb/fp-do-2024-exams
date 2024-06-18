@@ -4,6 +4,7 @@ import sttp.tapir.*
 
 import dotapir.model.HttpError
 
+// Custom starting endpoints secured with a bearer token or unsecured.
 trait BaseEndpoint {
   val baseEndpoint: Endpoint[Unit, Unit, Throwable, Unit, Any] = endpoint
     .errorOut(statusCode and plainBody[String])
