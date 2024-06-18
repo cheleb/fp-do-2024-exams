@@ -15,6 +15,7 @@ import dotapir.services.FlywayServiceLive
 import dotapir.repository.UserRepositoryLive
 import dotapir.repository.Repository
 
+// the http server -> program entry point
 object HttpServer extends ZIOAppDefault {
 
   private val webJarRoutes = staticResourcesGetServerEndpoint[Task]("public")(
@@ -22,6 +23,7 @@ object HttpServer extends ZIOAppDefault {
     "public"
   )
 
+  // add CORS
   val serverOptions: ZioHttpServerOptions[Any] =
     ZioHttpServerOptions.customiseInterceptors
       .appendInterceptor(
@@ -29,6 +31,7 @@ object HttpServer extends ZIOAppDefault {
       )
       .options
 
+  // run migrations with flyway
   private val runMigrations = for {
     flyway <- ZIO.service[FlywayService]
     _ <- flyway
@@ -39,10 +42,14 @@ object HttpServer extends ZIOAppDefault {
       }
   } yield ()
 
+  // program to run the http server
   private val serrverProgram =
     for {
+      // if start successfull print
       _ <- ZIO.succeed(println("Hello world"))
+      // get all endpoints
       endpoints <- HttpApi.endpointsZIO
+      // add swagger
       docEndpoints = SwaggerInterpreter()
         .fromServerEndpoints(endpoints, "zio-laminar-demo", "1.0.0")
       _ <- Server.serve(
@@ -51,6 +58,7 @@ object HttpServer extends ZIOAppDefault {
       )
     } yield ()
 
+  // main program
   private val program =
     for {
       _ <- runMigrations
@@ -59,6 +67,7 @@ object HttpServer extends ZIOAppDefault {
 
   override def run =
     program
+      // necessary to provide the server and the layers to access the database
       .provide(
         Server.default,
         // Service layers

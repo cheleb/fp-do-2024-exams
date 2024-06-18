@@ -8,10 +8,13 @@ trait BaseEndpoint {
   val baseEndpoint: Endpoint[Unit, Unit, Throwable, Unit, Any] = endpoint
     .errorOut(statusCode and plainBody[String])
     .mapErrorOut[Throwable](HttpError.decode)(HttpError.encode)
+    // all endpoints are prefixed with api/
     .prependIn("api")
 
+  // endpoint with security enabled
   val baseSecuredEndpoint: Endpoint[String, Unit, Throwable, Unit, Any] =
     baseEndpoint
+      // expected security to verify
       .securityIn(auth.bearer[String]())
 
 }
