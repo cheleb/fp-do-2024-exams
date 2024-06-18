@@ -19,6 +19,14 @@ class PersonController(userRepository: UserRepository) extends BaseController {
       )
     }
 
+  val getById: ServerEndpoint[Any, Task] = PersonEndpoints.getByIdEndpoint
+    .zServerLogic { case (id: Long) =>
+      userRepository
+        .getById(id)
+        // if an option is returned, throw an exception
+        .someOrFail(RuntimeException(s"User $id not found"))
+    }
+
   val delete: ServerEndpoint[Any, Task] = PersonEndpoints.deleteEndpoint
     .zServerLogic { case (id: Long) =>
       userRepository.delete(id)
@@ -30,7 +38,7 @@ class PersonController(userRepository: UserRepository) extends BaseController {
     }
 
   val routes: List[ServerEndpoint[Any, Task]] =
-    List(create, delete, list)
+    List(create, getById, delete, list)
 }
 
 object PersonController {
