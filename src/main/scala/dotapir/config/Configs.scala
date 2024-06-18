@@ -5,12 +5,15 @@ import zio.config.*
 import zio.config.typesafe.TypesafeConfigProvider
 
 import com.typesafe.config.ConfigFactory
+
+// Create a layer from the configuration provided (i.e. database configuration)
 object Configs:
   def makeConfigLayer[C](path: String)(using conf: Config[C], r: Tag[C]) =
+    // Construct layer
     ZLayer(
       TypesafeConfigProvider
         .fromTypesafeConfig(
           ConfigFactory.load().getConfig(path)
         )
-        .load[C](conf)
+        .load[C](conf) 
     )

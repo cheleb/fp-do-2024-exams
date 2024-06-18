@@ -39,12 +39,13 @@ object HttpServer extends ZIOAppDefault {
       }
   } yield ()
 
-  private val serrverProgram =
+  private val serverProgram =
     for {
       _ <- ZIO.succeed(println("Hello world"))
-      endpoints <- HttpApi.endpointsZIO
-      docEndpoints = SwaggerInterpreter()
+      endpoints <- HttpApi.endpointsZIO          // Declare API endpoints
+      docEndpoints = SwaggerInterpreter()        // Use Swagger to create endpoints documentation    
         .fromServerEndpoints(endpoints, "zio-laminar-demo", "1.0.0")
+      // Serve API and Swagger docs
       _ <- Server.serve(
         ZioHttpInterpreter(serverOptions)
           .toHttp(webJarRoutes :: endpoints ::: docEndpoints)
@@ -53,17 +54,17 @@ object HttpServer extends ZIOAppDefault {
 
   private val program =
     for {
-      _ <- runMigrations
-      _ <- serrverProgram
+      _ <- runMigrations  // Run blocking tasks on databse (clean, add Users table, ...)
+      _ <- serverProgram  // Start the API server
     } yield ()
 
-  override def run =
+  override def run = 
     program
       .provide(
         Server.default,
         // Service layers
-        FlywayServiceLive.configuredLayer,
-        UserRepositoryLive.layer,
-        Repository.dataLayer
+        FlywayServiceLive.configuredLayer, // Layer for Flyway service
+        UserRepositoryLive.layer, // Layer for User repository
+        Repository.dataLayer // Layer for data repository
       )
-}
+  }

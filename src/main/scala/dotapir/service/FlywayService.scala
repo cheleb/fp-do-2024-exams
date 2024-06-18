@@ -14,7 +14,7 @@ trait FlywayService {
 }
 
 class FlywayServiceLive private (flyway: Flyway) extends FlywayService {
-  override def runClean(): Task[Unit] = ZIO.attemptBlocking(flyway.clean())
+  override def runClean(): Task[Unit] = ZIO.attemptBlocking(flyway.clean()) // Blocking async task on database
   override def runBaseline(): Task[Unit] =
     ZIO.attemptBlocking(flyway.baseline())
   override def runMigrations(): Task[Unit] =
@@ -23,6 +23,7 @@ class FlywayServiceLive private (flyway: Flyway) extends FlywayService {
 }
 
 object FlywayServiceLive {
+  // Configure and load Flyway service
   def live: ZLayer[FlywayConfig, Throwable, FlywayService] = ZLayer(
     for {
       config <- ZIO.service[FlywayConfig]
