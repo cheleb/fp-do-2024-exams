@@ -20,6 +20,7 @@ class UserRepositoryLive private (quill: Quill.Postgres[SnakeCase])
     extends UserRepository {
 
   import quill.*
+  // Ici quill permet de générer les requêtes SQL à partir des cas class
 
   inline given SchemaMeta[User] = schemaMeta[User]("users")
   inline given InsertMeta[User] = insertMeta[User](_.id, _.created)

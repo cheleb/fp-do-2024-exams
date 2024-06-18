@@ -12,6 +12,8 @@ import dotapir.repository.UserRepository
 class PersonController(userRepository: UserRepository) extends BaseController {
 
   // Endpoint pour créer une nouvelle personne
+  // zServerLogic est une méthode qui permet de définir la logique du serveur pour un endpoint
+  // le case (person) est le paramètre de l'endpoint
   val create: ServerEndpoint[Any, Task] = PersonEndpoints.createEndpoint
     .zServerLogic { case (person) =>
       userRepository.create(

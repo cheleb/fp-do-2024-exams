@@ -10,6 +10,9 @@ import dotapir.model.*
 
 object PersonEndpoints extends BaseEndpoint:
 
+  // nos endpoints vont être définis ici et seront utilisés dans le contrôleur
+  // pour définir les routes de notre serveur
+  // Swagger va aussi utiliser ces endpoints pour générer la documentation
   val createEndpoint: Endpoint[Unit, Person, Throwable, User, Any] =
     baseEndpoint
       .tag("person")
