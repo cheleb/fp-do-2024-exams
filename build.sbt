@@ -1,5 +1,7 @@
 scalaVersion := "3.4.2"
 
+mainClass in reStart := Some("dotapir.HttpServer")
+
 val Versions = new {
   val zioConfig = "4.0.2"
   val flywaydb = "10.15.0"
