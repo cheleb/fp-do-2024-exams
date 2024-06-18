@@ -7,10 +7,12 @@ import io.getquill.*
 import io.getquill.jdbczio.Quill
 import dotapir.model.User
 
+// interface used to define the methods that will be implemented in the UserRepositoryLive class
 trait UserRepository {
   def create(user: User): Task[User]
   def getById(id: Long): Task[Option[User]]
   def getByEmail(email: String): Task[Option[User]]
+  def list: Task[List[User]]
   def update(id: Long, op: User => User): Task[User]
   def delete(id: Long): Task[User]
 }
@@ -31,6 +33,8 @@ class UserRepositoryLive private (quill: Quill.Postgres[SnakeCase])
   override def getByEmail(email: String): Task[Option[User]] =
     run(query[User].filter(_.email == lift(email))).map(_.headOption)
 
+  override def list: Task[List[User]] =
+    run(query[User])
   override def update(id: Long, op: User => User): Task[User] =
     for {
       user <- getById(id).someOrFail(
