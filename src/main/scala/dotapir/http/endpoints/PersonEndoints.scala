@@ -10,6 +10,7 @@ import dotapir.model.*
 
 object PersonEndpoints extends BaseEndpoint:
 
+  // The Endpoint Definitions with method types, tag, expected request and the kind of response
   val createEndpoint: Endpoint[Unit, Person, Throwable, User, Any] =
     baseEndpoint
       .tag("person")
@@ -23,3 +24,12 @@ object PersonEndpoints extends BaseEndpoint:
       )
       .out(jsonBody[User])
       .description("Create person")
+
+  val listPersonsEndpoint: Endpoint[Unit, Unit, Throwable, List[User], Any] =
+    baseEndpoint
+      .tag("person")
+      .name("listPersons")
+      .get
+      .in("person")
+      .out(jsonBody[List[User]])
+      .description("Get list of persons")
