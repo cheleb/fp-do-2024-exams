@@ -39,7 +39,7 @@ object HttpServer extends ZIOAppDefault {
       }
   } yield ()
 
-  private val serrverProgram =
+  private val serverProgram =
     for {
       _ <- ZIO.succeed(println("Hello world"))
       endpoints <- HttpApi.endpointsZIO
@@ -54,7 +54,7 @@ object HttpServer extends ZIOAppDefault {
   private val program =
     for {
       _ <- runMigrations
-      _ <- serrverProgram
+      _ <- serverProgram
     } yield ()
 
   override def run =
