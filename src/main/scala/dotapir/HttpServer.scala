@@ -15,13 +15,15 @@ import dotapir.services.FlywayServiceLive
 import dotapir.repository.UserRepositoryLive
 import dotapir.repository.Repository
 
+// This object defines the ZIO entry point
 object HttpServer extends ZIOAppDefault {
-
+  // Those defines the routes for the assets that can be included in the resources
   private val webJarRoutes = staticResourcesGetServerEndpoint[Task]("public")(
     this.getClass.getClassLoader,
     "public"
   )
 
+  // Those are the options for the HTTP server
   val serverOptions: ZioHttpServerOptions[Any] =
     ZioHttpServerOptions.customiseInterceptors
       .appendInterceptor(
@@ -29,6 +31,8 @@ object HttpServer extends ZIOAppDefault {
       )
       .options
 
+  // This is used to run the migrations using Flyway - this will first run the repairs
+  // to ensure that there are no failed migrations, and then run the migrations
   private val runMigrations = for {
     flyway <- ZIO.service[FlywayService]
     _ <- flyway
@@ -39,6 +43,9 @@ object HttpServer extends ZIOAppDefault {
       }
   } yield ()
 
+  // This creates the server program that holds the business logic, with the endpoints
+  // defined in this application and the generated documentation endpoints
+  // In the end, the HTTP server is started with the options defined above
   private val serrverProgram =
     for {
       _ <- ZIO.succeed(println("Hello world"))
@@ -51,12 +58,14 @@ object HttpServer extends ZIOAppDefault {
       )
     } yield ()
 
+  // This is the main program that will run the migrations and then start the server
   private val program =
     for {
       _ <- runMigrations
       _ <- serrverProgram
     } yield ()
 
+  // This is the program that is run when the ZIO application starts
   override def run =
     program
       .provide(
