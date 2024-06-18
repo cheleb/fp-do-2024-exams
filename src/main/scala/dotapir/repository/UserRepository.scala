@@ -9,6 +9,7 @@ import dotapir.model.User
 
 trait UserRepository {
   def create(user: User): Task[User]
+  def getAll: Task[List[User]]
   def getById(id: Long): Task[Option[User]]
   def getByEmail(email: String): Task[Option[User]]
   def update(id: Long, op: User => User): Task[User]
@@ -26,6 +27,7 @@ class UserRepositoryLive private (quill: Quill.Postgres[SnakeCase])
 
   override def create(user: User): Task[User] =
     run(query[User].insertValue(lift(user)).returning(r => r))
+  override def getAll: Task[List[User]] = run(query[User])
   override def getById(id: Long): Task[Option[User]] =
     run(query[User].filter(_.id == lift(id))).map(_.headOption)
   override def getByEmail(email: String): Task[Option[User]] =
