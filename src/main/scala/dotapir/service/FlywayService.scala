@@ -6,6 +6,7 @@ import org.flywaydb.core.Flyway
 import dotapir.config.FlywayConfig
 import dotapir.config.Configs
 
+// An interface of database migration-related operations to implement
 trait FlywayService {
   def runClean(): Task[Unit]
   def runBaseline(): Task[Unit]
@@ -22,6 +23,7 @@ class FlywayServiceLive private (flyway: Flyway) extends FlywayService {
   override def runRepair(): Task[Unit] = ZIO.attemptBlocking(flyway.repair())
 }
 
+// Create a FlywayService layer
 object FlywayServiceLive {
   def live: ZLayer[FlywayConfig, Throwable, FlywayService] = ZLayer(
     for {
@@ -35,6 +37,7 @@ object FlywayServiceLive {
     } yield new FlywayServiceLive(flyway)
   )
 
+  // Provide db configs (derived in FlywayConfig from resources folder) to the FlywayService layer
   val configuredLayer =
     Configs.makeConfigLayer[FlywayConfig]("db.dataSource") >>> live
 }

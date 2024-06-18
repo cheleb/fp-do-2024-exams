@@ -11,5 +11,6 @@ case class User(
     email: String,
     created: ZonedDateTime
 //  length: Option[Int] = None
+// Use jsonCodec operator to derive JSON from ZIO schemas
 ) derives JsonCodec,
       Schema

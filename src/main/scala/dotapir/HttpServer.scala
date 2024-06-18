@@ -29,6 +29,7 @@ object HttpServer extends ZIOAppDefault {
       )
       .options
 
+  // Use FlywayService to run database migrations
   private val runMigrations = for {
     flyway <- ZIO.service[FlywayService]
     _ <- flyway
@@ -43,8 +44,10 @@ object HttpServer extends ZIOAppDefault {
     for {
       _ <- ZIO.succeed(println("Hello world"))
       endpoints <- HttpApi.endpointsZIO
+      // Document endpoints with Swagger
       docEndpoints = SwaggerInterpreter()
         .fromServerEndpoints(endpoints, "zio-laminar-demo", "1.0.0")
+      // Launch server with all endpoints and a Swagger '/docs' endpoint
       _ <- Server.serve(
         ZioHttpInterpreter(serverOptions)
           .toHttp(webJarRoutes :: endpoints ::: docEndpoints)
@@ -52,6 +55,7 @@ object HttpServer extends ZIOAppDefault {
     } yield ()
 
   private val program =
+    // Run db migrations and then launch the server
     for {
       _ <- runMigrations
       _ <- serrverProgram
@@ -59,11 +63,13 @@ object HttpServer extends ZIOAppDefault {
 
   override def run =
     program
+    // Provide layers to the dependency graph
       .provide(
         Server.default,
-        // Service layers
+        // Service layers (allows dependency injection)
         FlywayServiceLive.configuredLayer,
         UserRepositoryLive.layer,
-        Repository.dataLayer
+        Repository.dataLayer,
+        ZLayer.Debug.tree
       )
 }
