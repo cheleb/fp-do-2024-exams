@@ -5,6 +5,7 @@ import sttp.tapir.server.ServerEndpoint
 
 import controllers.*
 
+// Object to gather all the controllers and their routes
 object HttpApi {
   private def gatherRoutes(
       controllers: List[BaseController]

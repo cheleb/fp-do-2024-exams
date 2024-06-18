@@ -8,9 +8,12 @@ final case class HttpError(
     cause: Throwable
 ) extends RuntimeException(message, cause)
 
+// Encodes/Decodes Exceptions into http errors
 object HttpError {
+  
   def decode(tuple: (StatusCode, String)) =
     HttpError(tuple._1, tuple._2, new RuntimeException(tuple._2))
+
   def encode(error: Throwable) =
     error match
       case UnauthorizedException(msg) => (StatusCode.Unauthorized, msg)
