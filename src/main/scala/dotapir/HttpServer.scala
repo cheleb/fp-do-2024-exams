@@ -29,6 +29,7 @@ object HttpServer extends ZIOAppDefault {
       )
       .options
 
+  // Run migrations using Flyway
   private val runMigrations = for {
     flyway <- ZIO.service[FlywayService]
     _ <- flyway
@@ -39,18 +40,20 @@ object HttpServer extends ZIOAppDefault {
       }
   } yield ()
 
+  // serrrrrver
   private val serrverProgram =
     for {
       _ <- ZIO.succeed(println("Hello world"))
-      endpoints <- HttpApi.endpointsZIO
+      endpoints <- HttpApi.endpointsZIO // Load all endpoints
       docEndpoints = SwaggerInterpreter()
-        .fromServerEndpoints(endpoints, "zio-laminar-demo", "1.0.0")
+        .fromServerEndpoints(endpoints, "zio-laminar-demo", "1.0.0") // Used to generate the swagger doc ?
       _ <- Server.serve(
         ZioHttpInterpreter(serverOptions)
-          .toHttp(webJarRoutes :: endpoints ::: docEndpoints)
+          .toHttp(webJarRoutes :: endpoints ::: docEndpoints) // Load all routes
       )
     } yield ()
 
+  // combine the migration and server io
   private val program =
     for {
       _ <- runMigrations

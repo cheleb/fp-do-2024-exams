@@ -6,6 +6,7 @@ import org.flywaydb.core.Flyway
 import dotapir.config.FlywayConfig
 import dotapir.config.Configs
 
+// Define a service for running Flyway migrations
 trait FlywayService {
   def runClean(): Task[Unit]
   def runBaseline(): Task[Unit]
@@ -14,6 +15,7 @@ trait FlywayService {
 }
 
 class FlywayServiceLive private (flyway: Flyway) extends FlywayService {
+  // Blocking using ZIO.attemptBlocking so 2 steps are not run concurrently
   override def runClean(): Task[Unit] = ZIO.attemptBlocking(flyway.clean())
   override def runBaseline(): Task[Unit] =
     ZIO.attemptBlocking(flyway.baseline())
@@ -27,6 +29,7 @@ object FlywayServiceLive {
     for {
       config <- ZIO.service[FlywayConfig]
       flyway <- ZIO.attempt(
+        // Load datasource in Flyway
         Flyway
           .configure()
           .dataSource(config.url, config.user, config.password)
