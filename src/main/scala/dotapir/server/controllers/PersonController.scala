@@ -6,12 +6,12 @@ import sttp.tapir.ztapir.*
 
 import dotapir.http.endpoints.PersonEndpoints
 import dotapir.model.User
-import java.time.LocalDateTime
 import java.time.ZonedDateTime
 import dotapir.repository.UserRepository
 
 class PersonController(userRepository: UserRepository) extends BaseController {
 
+  // Endpoint pour créer une nouvelle personne
   val create: ServerEndpoint[Any, Task] = PersonEndpoints.createEndpoint
     .zServerLogic { case (person) =>
       userRepository.create(
@@ -19,11 +19,19 @@ class PersonController(userRepository: UserRepository) extends BaseController {
       )
     }
 
+  // Endpoint pour récupérer toutes les personnes
+  val getAll: ServerEndpoint[Any, Task] = PersonEndpoints.getAllEndpoint
+    .zServerLogic { case _ =>
+      userRepository.getAll()
+    }
+
+  // Liste des endpoints disponibles dans ce contrôleur
   val routes: List[ServerEndpoint[Any, Task]] =
-    List(create)
+    List(create, getAll)
 }
 
 object PersonController {
+  // Méthode pour créer une instance de PersonController en utilisant ZIO
   def makeZIO =
     ZIO
       .service[UserRepository]

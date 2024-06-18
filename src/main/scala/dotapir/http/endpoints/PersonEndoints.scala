@@ -19,7 +19,17 @@ object PersonEndpoints extends BaseEndpoint:
       .in(
         jsonBody[Person]
           .description("Person to create")
-          .example(Person("John", 30, "jonh@dev.com"))
+          .example(Person("John", 30, "john@dev.com"))
       )
       .out(jsonBody[User])
       .description("Create person")
+
+
+  val getAllEndpoint: Endpoint[Unit, Unit, Throwable, List[User], Any] =
+    baseEndpoint
+      .tag("person")
+      .name("person")
+      .get
+      .in("person")
+      .out(jsonBody[List[User]])
+      .description("Get all persons")

@@ -13,6 +13,7 @@ trait UserRepository {
   def getByEmail(email: String): Task[Option[User]]
   def update(id: Long, op: User => User): Task[User]
   def delete(id: Long): Task[User]
+  def getAll(): Task[List[User]]
 }
 
 class UserRepositoryLive private (quill: Quill.Postgres[SnakeCase])
@@ -30,6 +31,7 @@ class UserRepositoryLive private (quill: Quill.Postgres[SnakeCase])
     run(query[User].filter(_.id == lift(id))).map(_.headOption)
   override def getByEmail(email: String): Task[Option[User]] =
     run(query[User].filter(_.email == lift(email))).map(_.headOption)
+  override def getAll(): Task[List[User]] = run(query[User])
 
   override def update(id: Long, op: User => User): Task[User] =
     for {
