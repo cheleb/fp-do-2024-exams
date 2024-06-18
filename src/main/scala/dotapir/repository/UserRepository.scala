@@ -62,5 +62,5 @@ class UserRepositoryLive private(quill: Quill.Postgres[SnakeCase])
 }
 
 object UserRepositoryLive {
-  def layer = ZLayer.fromFunction(UserRepositoryLive(_))
+  def layer: ZLayer[Quill.Postgres[SnakeCase], Nothing, UserRepositoryLive] = ZLayer.fromFunction(UserRepositoryLive(_))
 }

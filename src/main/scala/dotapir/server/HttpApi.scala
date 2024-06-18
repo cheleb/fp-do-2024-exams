@@ -2,8 +2,8 @@ package dotapir.server
 
 import zio.*
 import sttp.tapir.server.ServerEndpoint
-
 import controllers.*
+import dotapir.repository.UserRepository
 
 object HttpApi {
   // gather all the routes from the controllers
@@ -19,5 +19,5 @@ object HttpApi {
   } yield List(healthController, personController)
 
   //create a list of all the endpoints
-  val endpointsZIO = makeControllers.map(gatherRoutes)
+  val endpointsZIO: ZIO[UserRepository, Nothing, List[ServerEndpoint[Any, Task]]] = makeControllers.map(gatherRoutes)
 }

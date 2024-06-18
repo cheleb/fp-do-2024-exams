@@ -6,7 +6,6 @@ import sttp.tapir.ztapir.*
 
 import dotapir.http.endpoints.PersonEndpoints
 import dotapir.model.User
-import java.time.LocalDateTime
 import java.time.ZonedDateTime
 import dotapir.repository.UserRepository
 
@@ -14,7 +13,7 @@ class PersonController(userRepository: UserRepository) extends BaseController {
 
   // create a new user with id `-1` and current time
   val create: ServerEndpoint[Any, Task] = PersonEndpoints.createEndpoint
-    .zServerLogic { case (person) =>
+    .zServerLogic { person =>
       userRepository.create(
         User(-1, person.name, person.age, person.email, ZonedDateTime.now())
       )
@@ -32,7 +31,7 @@ class PersonController(userRepository: UserRepository) extends BaseController {
 }
 
 object PersonController {
-  def makeZIO =
+  def makeZIO: ZIO[UserRepository, Nothing, PersonController] =
     ZIO
       .service[UserRepository]
       .map(new PersonController(_))
