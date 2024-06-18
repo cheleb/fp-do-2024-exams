@@ -16,5 +16,13 @@ object HttpApi {
     personController <- PersonController.makeZIO
   } yield List(healthController, personController)
 
+  /*
+   * Notes:
+   *
+   * When adding an endpoint you should update:
+   * - `XYZController.routes` with the new endpoint
+   * - `XYZEndpoints.routes` with the definition for the new endpoint
+   */
+
   val endpointsZIO = makeControllers.map(gatherRoutes)
 }

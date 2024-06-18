@@ -1,1 +1,10 @@
 target/
+
+.vscode/
+.bloop/
+.bsp/
+.metals/
+project/*
+!project/build.properties
+!project/metlas.sbt
+!project/plugins.sbt

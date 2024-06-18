@@ -12,7 +12,9 @@ trait UserRepository {
   def getById(id: Long): Task[Option[User]]
   def getByEmail(email: String): Task[Option[User]]
   def update(id: Long, op: User => User): Task[User]
+  // TODO should throw an exception if the user is not found
   def delete(id: Long): Task[User]
+  def list(): Task[List[User]]
 }
 
 class UserRepositoryLive private (quill: Quill.Postgres[SnakeCase])
@@ -46,6 +48,9 @@ class UserRepositoryLive private (quill: Quill.Postgres[SnakeCase])
 
   override def delete(id: Long): Task[User] =
     run(query[User].filter(_.id == lift(id)).delete.returning(r => r))
+  
+  override def list(): Task[List[User]] =
+    run(query[User])
 }
 
 object UserRepositoryLive {
