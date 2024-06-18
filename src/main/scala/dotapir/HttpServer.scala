@@ -15,6 +15,7 @@ import dotapir.services.FlywayServiceLive
 import dotapir.repository.UserRepositoryLive
 import dotapir.repository.Repository
 
+// the http server -> program entry point
 object HttpServer extends ZIOAppDefault {
 
   private val webJarRoutes = staticResourcesGetServerEndpoint[Task]("public")(
@@ -43,6 +44,7 @@ object HttpServer extends ZIOAppDefault {
     for {
       _ <- ZIO.succeed(println("Hello world"))
       endpoints <- HttpApi.endpointsZIO
+      // add swagger
       docEndpoints = SwaggerInterpreter()
         .fromServerEndpoints(endpoints, "zio-laminar-demo", "1.0.0")
       _ <- Server.serve(
@@ -59,6 +61,7 @@ object HttpServer extends ZIOAppDefault {
 
   override def run =
     program
+      // necessary to provide the server and the layers to access the database
       .provide(
         Server.default,
         // Service layers

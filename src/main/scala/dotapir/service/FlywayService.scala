@@ -6,6 +6,8 @@ import org.flywaydb.core.Flyway
 import dotapir.config.FlywayConfig
 import dotapir.config.Configs
 
+// database migrations
+
 trait FlywayService {
   def runClean(): Task[Unit]
   def runBaseline(): Task[Unit]

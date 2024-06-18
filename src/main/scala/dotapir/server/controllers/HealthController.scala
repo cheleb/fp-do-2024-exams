@@ -5,6 +5,7 @@ import sttp.tapir.*
 import sttp.tapir.server.ServerEndpoint
 import dotapir.http.endpoints.HealthEndpoint
 
+// controller for health point
 class HealthController private extends BaseController with HealthEndpoint {
 
   val health = healthEndpoint
