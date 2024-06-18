@@ -34,7 +34,7 @@ object HttpServer extends ZIOAppDefault {
     _ <- flyway
       .runMigrations()
       .catchSome { case e =>
-        ZIO.logError(s"Error running migrations: ${e.getMessage()}")
+        ZIO.logError(s"Error running migrations: ${e.getMessage}")
           *> flyway.runRepair() *> flyway.runMigrations()
       }
   } yield ()
