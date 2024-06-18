@@ -6,6 +6,7 @@ import io.getquill.SnakeCase
 import io.getquill.jdbczio.Quill
 import io.getquill.jdbczio.Quill.Postgres
 
+// The base object used to create Repositories
 object Repository {
 
   def quillLayer = Quill.Postgres.fromNamingStrategy(SnakeCase)
