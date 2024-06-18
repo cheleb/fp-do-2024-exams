@@ -18,9 +18,14 @@ class PersonController(userRepository: UserRepository) extends BaseController {
         User(-1, person.name, person.age, person.email, ZonedDateTime.now())
       )
     }
+  
+  val getAll: ServerEndpoint[Any, Task] = PersonEndpoints.getAllEndpoint
+    .zServerLogic { case () =>
+      userRepository.getAll()
+    }
 
   val routes: List[ServerEndpoint[Any, Task]] =
-    List(create)
+    List(create, getAll)
 }
 
 object PersonController {

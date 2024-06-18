@@ -17,6 +17,7 @@ import dotapir.repository.Repository
 
 object HttpServer extends ZIOAppDefault {
 
+  // Endpoint pour servir des ressources statiques (webjars)
   private val webJarRoutes = staticResourcesGetServerEndpoint[Task]("public")(
     this.getClass.getClassLoader,
     "public"
@@ -29,6 +30,7 @@ object HttpServer extends ZIOAppDefault {
       )
       .options
 
+  // Exécuter les migrations de base de données
   private val runMigrations = for {
     flyway <- ZIO.service[FlywayService]
     _ <- flyway
@@ -39,22 +41,24 @@ object HttpServer extends ZIOAppDefault {
       }
   } yield ()
 
-  private val serrverProgram =
+  // Exécuter serveur HTTP
+  private val serverProgram =
     for {
       _ <- ZIO.succeed(println("Hello world"))
-      endpoints <- HttpApi.endpointsZIO
+      endpoints <- HttpApi.endpointsZIO // Récupération des endpoints définis dans HttpApi
       docEndpoints = SwaggerInterpreter()
-        .fromServerEndpoints(endpoints, "zio-laminar-demo", "1.0.0")
+        .fromServerEndpoints(endpoints, "zio-laminar-demo", "1.0.0") // Génère la documentation Swagger
       _ <- Server.serve(
         ZioHttpInterpreter(serverOptions)
-          .toHttp(webJarRoutes :: endpoints ::: docEndpoints)
+          .toHttp(webJarRoutes :: endpoints ::: docEndpoints) // Démarrage du serveur avec les endpoints et la doc Swagger
       )
     } yield ()
-
+  
+  // Programme global "serveur HTTP" et "migrations"
   private val program =
     for {
       _ <- runMigrations
-      _ <- serrverProgram
+      _ <- serverProgram
     } yield ()
 
   override def run =
