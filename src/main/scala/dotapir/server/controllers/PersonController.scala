@@ -19,8 +19,18 @@ class PersonController(userRepository: UserRepository) extends BaseController {
       )
     }
 
+  val delete: ServerEndpoint[Any, Task] = PersonEndpoints.deleteEndpoint
+    .zServerLogic { case (id: Long) =>
+      userRepository.delete(id)
+    }
+
+  val list: ServerEndpoint[Any, Task] = PersonEndpoints.listEndpoint
+    .zServerLogic { _ =>
+      userRepository.list()
+    }
+
   val routes: List[ServerEndpoint[Any, Task]] =
-    List(create)
+    List(create, delete, list)
 }
 
 object PersonController {
