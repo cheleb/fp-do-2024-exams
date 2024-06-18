@@ -9,27 +9,40 @@ import dotapir.model.User
 
 trait UserRepository {
   def create(user: User): Task[User]
+
   def getById(id: Long): Task[Option[User]]
+
   def getByEmail(email: String): Task[Option[User]]
+
+  def getAll: Task[List[User]]
+
   def update(id: Long, op: User => User): Task[User]
+
   def delete(id: Long): Task[User]
 }
 
-class UserRepositoryLive private (quill: Quill.Postgres[SnakeCase])
-    extends UserRepository {
+class UserRepositoryLive private(quill: Quill.Postgres[SnakeCase])
+  extends UserRepository {
 
   import quill.*
 
   inline given SchemaMeta[User] = schemaMeta[User]("users")
+
   inline given InsertMeta[User] = insertMeta[User](_.id, _.created)
+
   inline given UpdateMeta[User] = updateMeta[User](_.id, _.created)
 
   override def create(user: User): Task[User] =
     run(query[User].insertValue(lift(user)).returning(r => r))
+
   override def getById(id: Long): Task[Option[User]] =
     run(query[User].filter(_.id == lift(id))).map(_.headOption)
+
   override def getByEmail(email: String): Task[Option[User]] =
     run(query[User].filter(_.email == lift(email))).map(_.headOption)
+
+  override def getAll: Task[List[User]] =
+    run(query[User])
 
   override def update(id: Long, op: User => User): Task[User] =
     for {
