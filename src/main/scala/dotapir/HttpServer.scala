@@ -10,8 +10,8 @@ import sttp.tapir.swagger.bundle.SwaggerInterpreter
 import sttp.tapir.server.interceptor.cors.CORSInterceptor
 
 import dotapir.server.HttpApi
-import dotapir.services.FlywayService
-import dotapir.services.FlywayServiceLive
+import dotapir.service.FlywayService
+import dotapir.service.FlywayServiceLive
 import dotapir.repository.UserRepositoryLive
 import dotapir.repository.Repository
 
@@ -22,7 +22,7 @@ object HttpServer extends ZIOAppDefault {
     "public"
   )
 
-  val serverOptions: ZioHttpServerOptions[Any] =
+  private val serverOptions: ZioHttpServerOptions[Any] =
     ZioHttpServerOptions.customiseInterceptors
       .appendInterceptor(
         CORSInterceptor.default
@@ -34,12 +34,12 @@ object HttpServer extends ZIOAppDefault {
     _ <- flyway
       .runMigrations()
       .catchSome { case e =>
-        ZIO.logError(s"Error running migrations: ${e.getMessage()}")
+        ZIO.logError(s"Error running migrations: ${e.getMessage}")
           *> flyway.runRepair() *> flyway.runMigrations()
       }
   } yield ()
 
-  private val serrverProgram =
+  private val serverProgram =
     for {
       _ <- ZIO.succeed(println("Hello world"))
       endpoints <- HttpApi.endpointsZIO
@@ -54,10 +54,10 @@ object HttpServer extends ZIOAppDefault {
   private val program =
     for {
       _ <- runMigrations
-      _ <- serrverProgram
+      _ <- serverProgram
     } yield ()
 
-  override def run =
+  override def run: ZIO[Any, Throwable, Unit] =
     program
       .provide(
         Server.default,

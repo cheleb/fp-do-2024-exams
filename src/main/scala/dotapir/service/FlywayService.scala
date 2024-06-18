@@ -1,4 +1,4 @@
-package dotapir.services
+package dotapir.service
 
 import zio.*
 import org.flywaydb.core.Flyway
@@ -23,7 +23,7 @@ class FlywayServiceLive private (flyway: Flyway) extends FlywayService {
 }
 
 object FlywayServiceLive {
-  def live: ZLayer[FlywayConfig, Throwable, FlywayService] = ZLayer(
+  private def live: ZLayer[FlywayConfig, Throwable, FlywayService] = ZLayer(
     for {
       config <- ZIO.service[FlywayConfig]
       flyway <- ZIO.attempt(
@@ -35,6 +35,6 @@ object FlywayServiceLive {
     } yield new FlywayServiceLive(flyway)
   )
 
-  val configuredLayer =
+  val configuredLayer: ZLayer[Any, Throwable, FlywayService] =
     Configs.makeConfigLayer[FlywayConfig]("db.dataSource") >>> live
 }
