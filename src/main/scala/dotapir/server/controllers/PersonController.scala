@@ -12,6 +12,7 @@ import dotapir.repository.UserRepository
 
 class PersonController(userRepository: UserRepository) extends BaseController {
 
+  // create a new user with id `-1` and current time
   val create: ServerEndpoint[Any, Task] = PersonEndpoints.createEndpoint
     .zServerLogic { case (person) =>
       userRepository.create(
@@ -19,11 +20,13 @@ class PersonController(userRepository: UserRepository) extends BaseController {
       )
     }
   
+  // get all the users
   val get: ServerEndpoint[Any, Task] = PersonEndpoints.getAllEndpoint
     .zServerLogic { _ =>
       userRepository.getAll
     }
 
+  // create a list of all the routes
   val routes: List[ServerEndpoint[Any, Task]] =
     List(create, get)
 }
