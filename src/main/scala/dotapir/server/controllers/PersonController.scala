@@ -19,15 +19,18 @@ class PersonController(userRepository: UserRepository) extends BaseController {
       )
     }
 
+  // Declare 'list' that uses listEndpoint
   val list: ServerEndpoint[Any, Task] = PersonEndpoints.listEndpoint
     .zServerLogic { _ =>
+      // Call the 'getAll' method of the userRepository to retrieve all users
       userRepository.getAll()
     }
 
   val routes: List[ServerEndpoint[Any, Task]] =
-    List(create, list)
+    List(create, list)  // List of my routes
 }
 
+// Create an object to instantiate the PersonController with ZIO
 object PersonController {
   def makeZIO =
     ZIO

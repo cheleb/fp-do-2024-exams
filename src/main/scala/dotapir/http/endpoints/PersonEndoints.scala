@@ -9,7 +9,7 @@ import sttp.tapir.generic.auto.*
 import dotapir.model.*
 
 object PersonEndpoints extends BaseEndpoint:
-
+  // Create person endpoint
   val createEndpoint: Endpoint[Unit, Person, Throwable, User, Any] =
     baseEndpoint
       .tag("person")
@@ -17,6 +17,10 @@ object PersonEndpoints extends BaseEndpoint:
       .post
       .in("person")
       .in(
+        /*
+         * Parses the JSON body of the HTTP request into a `Person`
+         * @return The parsed `Person` object.
+         */
         jsonBody[Person]
           .description("Person to create")
           .example(Person("John", 30, "jonh@dev.com"))
@@ -31,5 +35,5 @@ object PersonEndpoints extends BaseEndpoint:
       .name("persons")
       .get
       .in("persons")
-      .out(jsonBody[List[User]])
+      .out(jsonBody[List[User]])  // Parse Json body ressponse to List[User]
       .description("List persons")

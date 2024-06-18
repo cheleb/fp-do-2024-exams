@@ -28,6 +28,7 @@ class UserRepositoryLive private (quill: Quill.Postgres[SnakeCase])
   override def create(user: User): Task[User] =
     run(query[User].insertValue(lift(user)).returning(r => r))
   override def getAll(): Task[List[User]] =
+    // Generate SQL and retrieve a ZIO (async) response of users
     run(query[User]).map(_.toList)
   override def getById(id: Long): Task[Option[User]] =
     run(query[User].filter(_.id == lift(id))).map(_.headOption)
