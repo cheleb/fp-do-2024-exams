@@ -8,8 +8,12 @@ import sttp.tapir.generic.auto.*
 
 import dotapir.model.*
 
+// This contains all the HTTP endpoints related to the person controller
 object PersonEndpoints extends BaseEndpoint:
-
+  // This is the person create endpoint that defines a POST request to the /person path
+  // It receives a Person object in the request body as a JSON object and returns a User object in
+  // the response body as a JSON object
+  // An example for the request body is also provided for the OpenAPI specification
   val createEndpoint: Endpoint[Unit, Person, Throwable, User, Any] =
     baseEndpoint
       .tag("person")
@@ -24,6 +28,8 @@ object PersonEndpoints extends BaseEndpoint:
       .out(jsonBody[User])
       .description("Create person")
 
+  // This is the person get endpoint that defines a GET request to the /person path
+  // It returns all the users in the response body as a JSON array
   val getAllEndpoint: Endpoint[Unit, Unit, Throwable, List[User], Any] =
     baseEndpoint
       .tag("person")

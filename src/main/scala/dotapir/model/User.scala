@@ -4,6 +4,7 @@ import zio.json.JsonCodec
 import sttp.tapir.Schema
 import java.time.ZonedDateTime
 
+// This defines a user
 case class User(
     id: Long,
     name: String,
