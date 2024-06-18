@@ -12,8 +12,8 @@ object PersonEndpoints extends BaseEndpoint:
 
   val createEndpoint: Endpoint[Unit, Person, Throwable, User, Any] =
     baseEndpoint
-      .tag("person")
-      .name("person")
+      .tag("create-person")
+      .name("create-person")
       .post
       .in("person")
       .in(
@@ -23,3 +23,14 @@ object PersonEndpoints extends BaseEndpoint:
       )
       .out(jsonBody[User])
       .description("Create person")
+
+  /** J'ai pas compris pourquoi -R est contravariant ici.
+    */
+  val listEndpoint: Endpoint[Unit, Unit, Throwable, List[User], Any] =
+    baseEndpoint
+      .tag("list-person")
+      .name("list-person")
+      .in("person")
+      .get
+      .out(jsonBody[List[User]])
+      .description("List all persons")

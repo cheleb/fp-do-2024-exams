@@ -10,6 +10,9 @@ import java.time.LocalDateTime
 import java.time.ZonedDateTime
 import dotapir.repository.UserRepository
 
+/** User repository est injecté dans le controller grâce à ZIO, on doit
+  * évidemment le fournir dans les dépandances de l'application. (HttpApi.scala)
+  */
 class PersonController(userRepository: UserRepository) extends BaseController {
 
   val create: ServerEndpoint[Any, Task] = PersonEndpoints.createEndpoint
@@ -19,8 +22,13 @@ class PersonController(userRepository: UserRepository) extends BaseController {
       )
     }
 
+  val list: ServerEndpoint[Any, Task] = PersonEndpoints.listEndpoint
+    .zServerLogic { case () =>
+      userRepository.getAll
+    }
+
   val routes: List[ServerEndpoint[Any, Task]] =
-    List(create)
+    List(list, create)
 }
 
 object PersonController {

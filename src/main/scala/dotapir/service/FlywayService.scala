@@ -22,6 +22,17 @@ class FlywayServiceLive private (flyway: Flyway) extends FlywayService {
   override def runRepair(): Task[Unit] = ZIO.attemptBlocking(flyway.repair())
 }
 
+/** Composition verticale de layers ZIO, en prenant la configuration Flyway et
+  * en créant un service Flyway. On se retrouve avec un layer ZIO avec les
+  * dépendances du layer à gauche du `>>>` et les ressources du layer à droite
+  * du `>>>` (ses dépendances ont été consommées).
+  *
+  * C'est pourquoi le type sortant est ZLayer[Any, Throwable, FlywayService]
+  *
+  * On remarque qu'il à gardé le Throwable dans le type sortant, dans notre cas,
+  * si les erreurs étaient plus précises, il aurait trouvé le type d'erreur
+  * commune entre les erreurs possibles.
+  */
 object FlywayServiceLive {
   def live: ZLayer[FlywayConfig, Throwable, FlywayService] = ZLayer(
     for {

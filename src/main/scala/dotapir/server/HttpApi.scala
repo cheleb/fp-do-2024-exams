@@ -5,6 +5,10 @@ import sttp.tapir.server.ServerEndpoint
 
 import controllers.*
 
+/** Simple objet permettant de rassembler les endpoints des différents
+  * controllers. Comme chaque controller renvoie une liste d'endpoints, on peut
+  * utiliser les operations map et flatMap pour les rassembler.
+  */
 object HttpApi {
   private def gatherRoutes(
       controllers: List[BaseController]
