@@ -24,6 +24,7 @@ object PersonEndpoints extends BaseEndpoint:
       .out(jsonBody[User])
       .description("Create person")
 
+  // 
   val getAllEndpoint: Endpoint[Unit, Unit, Throwable, List[User], Any] =
     baseEndpoint
       .tag("person")
