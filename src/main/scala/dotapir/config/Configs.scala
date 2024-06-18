@@ -6,7 +6,8 @@ import zio.config.typesafe.TypesafeConfigProvider
 
 import com.typesafe.config.ConfigFactory
 object Configs:
-  def makeConfigLayer[C](path: String)(using conf: Config[C], r: Tag[C]) =
+  // Create a ZLayer from a configuration located at `path`
+  def makeConfigLayer[C](path: String)(using conf: Config[C], r: Tag[C]): ZLayer[Any, Config.Error, C] =
     ZLayer(
       TypesafeConfigProvider
         .fromTypesafeConfig(
