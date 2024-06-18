@@ -43,6 +43,7 @@ object HttpServer extends ZIOAppDefault {
     for {
       _ <- ZIO.succeed(println("Hello world"))
       endpoints <- HttpApi.endpointsZIO
+      // Notes: these endpoints can be found in `src/main/scala/dotapir/http/endpoints/`
       docEndpoints = SwaggerInterpreter()
         .fromServerEndpoints(endpoints, "zio-laminar-demo", "1.0.0")
       _ <- Server.serve(

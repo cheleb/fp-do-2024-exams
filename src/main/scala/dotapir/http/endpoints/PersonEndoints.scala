@@ -10,6 +10,19 @@ import dotapir.model.*
 
 object PersonEndpoints extends BaseEndpoint:
 
+  /** Notes:
+    *
+    * only in swagger
+    *   - the `tag` is the category of the endpoint, should be the same for all
+    *   - the `name` is the name of the endpoint, should be unique by endpoint
+    *
+    * swagger + http api
+    *   - the `in` corresponds to every path/body/... that can be given to an
+    *     endpoint
+    *   - the `out` corresponds to everything that can be returned by the
+    *     endpoint
+    */
+
   val createEndpoint: Endpoint[Unit, Person, Throwable, User, Any] =
     baseEndpoint
       .tag("persons")
